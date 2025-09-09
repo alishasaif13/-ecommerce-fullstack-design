@@ -6,12 +6,12 @@ import { useAuth } from '../contexts/AuthContext';
 const CartPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { 
-    cart: cartItems, 
-    removeFromCart, 
-    updateQuantity, 
-    clearCart, 
-    getCartTotal 
+  const {
+    cart: cartItems,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    getCartTotal
   } = useCart();
   const [loading, setLoading] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -51,7 +51,6 @@ const CartPage = () => {
       return;
     }
 
-    // Validate shipping address
     if (!shippingAddress.address || !shippingAddress.city || !shippingAddress.postalCode || !shippingAddress.country) {
       alert('Please fill in all shipping address fields before checkout.');
       return;
@@ -126,14 +125,14 @@ const CartPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md">
-              <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Cart Items ({cartItems.length})</h2>
+              <div className="p-4 sm:p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 className="text-lg sm:text-xl font-semibold">Cart Items ({cartItems.length})</h2>
                 <button
                   onClick={handleClearCart}
                   className="text-red-600 hover:text-red-800 text-sm font-medium"
@@ -143,46 +142,45 @@ const CartPage = () => {
               </div>
               <div className="divide-y divide-gray-200">
                 {cartItems.map((item) => (
-                  <div key={item._id} className="p-6 flex items-center space-x-4">
+                  <div key={item._id} className="p-4 sm:p-6 flex space-x-4">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-20 h-20 object-cover rounded-lg"
+                      className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg flex-shrink-0"
                     />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-2">{item.name}</h3>
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center border border-gray-300 rounded-lg">
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start">
+                          <h3 className="font-semibold text-gray-900 mb-2 pr-4">{item.name}</h3>
+                          <button
+                            onClick={() => handleRemoveItem(item._id)}
+                            className="text-red-500 hover:text-red-700 flex-shrink-0"
+                            aria-label={`Remove ${item.name}`}
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2">
+                        <div className="flex items-center border border-gray-300 rounded-lg text-sm">
                           <button
                             onClick={() => handleUpdateQuantity(item._id, item.quantity - 1)}
                             className="px-3 py-1 hover:bg-gray-100"
-                          >
-                            -
-                          </button>
+                            disabled={item.quantity <= 1}
+                          > - </button>
                           <span className="px-4 py-1 border-x border-gray-300">{item.quantity}</span>
                           <button
                             onClick={() => handleUpdateQuantity(item._id, item.quantity + 1)}
                             className="px-3 py-1 hover:bg-gray-100"
-                          >
-                            +
-                          </button>
+                          > + </button>
                         </div>
-                        <div className="text-right">
-                          <span className="text-lg font-bold text-gray-900">PKR {(item.price * item.quantity).toFixed(2)}</span>
-                          {item.originalPrice > item.price && (
-                            <span className="text-sm text-gray-500 line-through ml-2">PKR {(item.originalPrice * item.quantity).toFixed(2)}</span>
-                          )}
+                        <div className="text-right mt-2 sm:mt-0">
+                          <span className="text-base sm:text-lg font-bold text-gray-900">PKR {(item.price * item.quantity).toFixed(2)}</span>
                         </div>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleRemoveItem(item._id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
                   </div>
                 ))}
               </div>
@@ -191,9 +189,9 @@ const CartPage = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
               <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
-              
+
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
@@ -215,7 +213,7 @@ const CartPage = () => {
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={() => setShowCheckout(!showCheckout)}
                 className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300 font-semibold mb-4"
               >
@@ -226,34 +224,10 @@ const CartPage = () => {
                 <div className="border-t border-gray-200 pt-4">
                   <h3 className="font-semibold mb-3">Shipping Address</h3>
                   <div className="space-y-3">
-                    <input
-                      type="text"
-                      placeholder="Address"
-                      value={shippingAddress.address}
-                      onChange={(e) => setShippingAddress({...shippingAddress, address: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      placeholder="City"
-                      value={shippingAddress.city}
-                      onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Postal Code"
-                      value={shippingAddress.postalCode}
-                      onChange={(e) => setShippingAddress({...shippingAddress, postalCode: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Country"
-                      value={shippingAddress.country}
-                      onChange={(e) => setShippingAddress({...shippingAddress, country: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <input type="text" placeholder="Address" value={shippingAddress.address} onChange={(e) => setShippingAddress({ ...shippingAddress, address: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="text" placeholder="City" value={shippingAddress.city} onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="text" placeholder="Postal Code" value={shippingAddress.postalCode} onChange={(e) => setShippingAddress({ ...shippingAddress, postalCode: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="text" placeholder="Country" value={shippingAddress.country} onChange={(e) => setShippingAddress({ ...shippingAddress, country: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   </div>
                   <button
                     onClick={handleCheckout}
@@ -278,4 +252,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage; 
+export default CartPage;

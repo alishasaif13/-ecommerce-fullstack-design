@@ -54,12 +54,12 @@ const ProductDetailsPage = () => {
   if (error || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center p-4">
           <p className="text-red-600 text-lg mb-4">
             {error || 'Product not found'}
           </p>
-          <button 
-            onClick={() => navigate('/products')} 
+          <button
+            onClick={() => navigate('/products')}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Back to Products
@@ -69,35 +69,34 @@ const ProductDetailsPage = () => {
     );
   }
 
-  const discountPercentage = product.originalPrice > product.price 
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) 
+  const discountPercentage = product.originalPrice > product.price
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
-  // Create images array from single image if no multiple images
-  const images = product.images ? product.images : [product.image];
+  const images = product.images && product.images.length > 0 ? product.images : [product.image];
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+
           {/* Product Images */}
           <div>
             <div className="mb-4">
               <img
                 src={images[selectedImage]}
                 alt={product.name}
-                className="w-full h-96 object-cover rounded-lg"
+                className="w-full h-80 md:h-96 object-cover rounded-lg shadow-md"
               />
             </div>
             {images.length > 1 && (
-              <div className="flex space-x-2">
+              <div className="flex flex-wrap gap-2">
                 {images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                      selectedImage === index ? 'border-blue-500' : 'border-gray-200'
-                    }`}
+                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${selectedImage === index ? 'border-blue-500 scale-105' : 'border-gray-200'
+                      }`}
                   >
                     <img
                       src={image}
@@ -112,8 +111,8 @@ const ProductDetailsPage = () => {
 
           {/* Product Info */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-            
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+
             {/* Rating */}
             <div className="flex items-center mb-4">
               <div className="flex text-yellow-400">
@@ -123,14 +122,14 @@ const ProductDetailsPage = () => {
                   </svg>
                 ))}
               </div>
-              <span className="text-gray-600 ml-2">
+              <span className="text-gray-600 ml-2 text-sm">
                 {product.rating || 0} ({product.reviews || 0} reviews)
               </span>
             </div>
 
             {/* Price */}
             <div className="mb-6">
-              <span className="text-3xl font-bold text-gray-900">₨{product.price}</span>
+              <span className="text-2xl md:text-3xl font-bold text-gray-900">₨{product.price}</span>
               {product.originalPrice > product.price && (
                 <>
                   <span className="text-lg text-gray-500 line-through ml-2">₨{product.originalPrice}</span>
@@ -143,11 +142,10 @@ const ProductDetailsPage = () => {
 
             {/* Stock Status */}
             <div className="mb-4">
-              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                product.stock > 0 
-                  ? 'bg-green-100 text-green-800' 
+              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${product.stock > 0
+                  ? 'bg-green-100 text-green-800'
                   : 'bg-red-100 text-red-800'
-              }`}>
+                }`}>
                 {product.stock > 0 ? `In Stock (${product.stock} available)` : 'Out of Stock'}
               </span>
             </div>
@@ -164,15 +162,15 @@ const ProductDetailsPage = () => {
               </span>
             </div>
 
-            {/* Quantity and Add to Cart */}
+            {/* Quantity and Action Buttons */}
             <div className="mb-6">
               <div className="flex items-center mb-4">
-                <label className="mr-4 font-medium">Quantity:</label>
+                <label className="mr-4 font-medium text-sm">Quantity:</label>
                 <div className="flex items-center border border-gray-300 rounded-lg">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="px-3 py-2 hover:bg-gray-100 disabled:opacity-50"
-                    disabled={product.stock === 0}
+                    disabled={product.stock === 0 || quantity <= 1}
                   >
                     -
                   </button>
@@ -180,25 +178,22 @@ const ProductDetailsPage = () => {
                   <button
                     onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                     className="px-3 py-2 hover:bg-gray-100 disabled:opacity-50"
-                    disabled={product.stock === 0}
+                    disabled={product.stock === 0 || quantity >= product.stock}
                   >
                     +
                   </button>
                 </div>
-                <span className="ml-2 text-sm text-gray-500">
-                  Max: {product.stock}
-                </span>
               </div>
-              <div className="flex space-x-4">
-                <button 
-                  className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <button
+                  className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleAddToCart}
                   disabled={product.stock === 0}
                 >
                   Add to Cart
                 </button>
-                <button 
-                  className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-lg hover:bg-gray-300 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                <button
+                  className="flex-1 bg-gray-800 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-900 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleBuyNow}
                   disabled={product.stock === 0}
                 >
@@ -213,4 +208,4 @@ const ProductDetailsPage = () => {
   );
 };
 
-export default ProductDetailsPage; 
+export default ProductDetailsPage;
